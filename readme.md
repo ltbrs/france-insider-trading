@@ -1,0 +1,1 @@
+Objective: Analyse insider trading in France. Find buy opportunity.
