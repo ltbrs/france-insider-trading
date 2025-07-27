@@ -10,6 +10,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 from typing import Optional, Union, Dict, Any
 import warnings
+import logging
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings('ignore')
@@ -66,13 +67,13 @@ def get_stock_history(
         return hist
     
     except Exception as e:
-        raise ValueError(f"Error retrieving data for {ticker}: {str(e)}")
+        logging.error(f"Error retrieving data for {ticker}: {str(e)}")
+        return pd.DataFrame()
 
 
 def get_daily_prices(
     ticker: str,
-    days: int = 365,
-    include_volume: bool = True
+    days: int = 365
 ) -> pd.DataFrame:
     """
     Get daily closing prices for a stock over a specified number of days.
@@ -89,11 +90,7 @@ def get_daily_prices(
     start_date = end_date - timedelta(days=days)
     
     hist = get_stock_history(ticker, start_date=start_date, end_date=end_date)
-    
-    if include_volume:
-        return hist[['Close', 'Volume']]
-    else:
-        return hist[['Close']]
+    return hist
 
 
 def get_stock_info(ticker: str) -> Dict[str, Any]:
@@ -127,7 +124,8 @@ def get_stock_info(ticker: str) -> Dict[str, Any]:
         return key_info
     
     except Exception as e:
-        raise ValueError(f"Error retrieving info for {ticker}: {str(e)}")
+        logging.error(f"Error retrieving info for {ticker}: {str(e)}")
+        #raise ValueError(f"Error retrieving info for {ticker}: {str(e)}")
 
 
 def get_multiple_stocks_history(
